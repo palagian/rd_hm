@@ -16,11 +16,15 @@ phone_book = [{"name": "Stepan Bandera", "phone": "+380501112233"},
 # function for calculation number of elements
 def com_stats(phone_book):
     elements_number = len(phone_book)
+    """return count of phone numbers"""
     return elements_number
 
 # function for adding elements
 def com_add(phone_book):
-    phone_book.append({"name": "Ivan Franko", "phone": "+380666667788"})
+    new_contact = input(f"Please, enter name, surname and phone number (use space between): ")
+    name, surname, phone = new_contact.split()
+    phone_book.append({"name": name + " " + surname, "phone": phone})
+    """return the phone book with a new element"""
     return phone_book
 
 # function for deleting element
@@ -28,6 +32,7 @@ def com_del(phone_book):
     index_del = input(f"Number of element you want to delete: ")
     index_del_int = int(index_del)
     phone_book.pop(index_del_int)
+    """return phone book without chosen element"""
     return phone_book
 
 # function for getting all names from the list
