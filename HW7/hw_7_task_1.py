@@ -23,9 +23,13 @@ def com_stats(phone_book):
 def com_add(phone_book):
     new_contact = input(f"Please, enter name, surname and phone number (use space between): ")
     name, surname, phone = new_contact.split()
+    """add a new contact to the phone book"""
     phone_book.append({"name": name + " " + surname, "phone": phone})
-    """return the phone book with a new element"""
-    return phone_book
+    """check if there is the same contact"""
+    if phone_book.count({"name": name + " " + surname, "phone": phone}) != 1:
+        print(f"This contact already exists!")
+    else:
+        return phone_book
 
 # function for deleting element
 def com_del(phone_book):
