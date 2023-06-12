@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Site</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="index.js"></script>
+</head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <img src="my_photo.png" alt="Фото" class="profile-img">
+          <h1>Anastasiia Palahina</h1>
+          <span>Business Analyst</span>
+          <p class="mt-4">
+          <strong>Location:</strong> Vilnius, Lithuania <br /><br />
+          <strong>Scope of work:</strong> Analytics, Project Management, Category Management <br /><br />
+          <strong>Accomplishments:</strong> creating a culture of data analytics in a company from the ground up; creating a database in the company; creating Power BI reports for management <br /><br/>
+          <strong>Technical skills:</strong> Excel, PowerBI, DAX, SQL, JavaScript, CSS, HTML, Python <br /><br />
+          <strong>Friends: </strong><span id="friend-count">0</span> <br />
+          </p>
+          <button type="button" class="btn btn-primary" onclick="addFriend()" id="add-friend-btn">Add to friends</button>
+          <button type="button" class="btn btn-primary" id="send-message-btn">Send a message</button>
+          <button type="button" class="btn btn-primary" onclick="toggleJobButton()" id="offer-job-btn">Offer a job</button>
+          <br />
+          <button type="button" class="btn btn-primary" onclick="sendHW()" id="send-hw-btn">Send your HW</button>
+        </div>
+        <div class="col-md-8">
+          <h2>Python Developer course homework grades</h2>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Homework</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody id="hw-table-body">
+              <tr>
+                <td>№3 «Базові типи даних та операції. Part 1»</td>
+                <td>5 / 5</td>
+              </tr>
+              <tr>
+                <td>№4 «Базові типи даних та операції. Part 2»</td>
+                <td>5 / 5</td>
+              </tr>
+              <tr>
+                <td>№5 «Цикли»</td>
+                <td>5 / 5</td>
+              </tr>
+               <tr>
+                <td>№6 «Функції»</td>
+                <td>8 / 8</td>
+              </tr>
+               <tr>
+                <td>№7 «Колекції та структури даних. Part 1»</td>
+                <td>5 / 5</td>
+              </tr>
+               <tr>
+                <td>№8 «Колекції та структури даних. Part 2»</td>
+                <td>7 / 7</td>
+              </tr>
+               <tr>
+                <td>№10 «Рекурсія»</td>
+                <td>7 / 7</td>
+              </tr>
+              <tr>
+                <td>№11 «Помилки та винятки»</td>
+                <td>6 / 6</td>
+              </tr>
+              <tr>
+                <td>№12 «Декоратори і менеджери контексту»</td>
+                <td>7 / 7</td>
+              </tr>
+              <tr>
+                <td>№13 «Файли»</td>
+                <td>5 / 5</td>
+              </tr>
+               <tr>
+                <td>№15 «Регулярні вирази (RegEx) в Python»</td>
+                <td>7 / 7</td>
+              </tr>
+               <tr>
+                <td>№16 «Багатопотокове програмування»</td>
+                <td>5 / 5</td>
+              </tr>
+               <tr>
+                <td>№19 «ООП на прикладах в Python: класи і робота з ними»</td>
+                <td>8 / 8</td>
+              </tr>
+               <tr>
+                <td>№21 «Створення бази даних»</td>
+                <td>7 / 7</td>
+              </tr>
+              </tr>
+               <tr>
+                <td>№22 «Робота з базами даних. Part 1»</td>
+                <td>6 / 6</td>
+              </tr>
+               <tr>
+                <td>№23 «Робота з базами даних. Part 2»</td>
+                <td>6 / 6</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>Work experience</h2>
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">REIZ TECH</h5>
+              <p class="card-text">04.2022 - now</p>
+              <p class="card-text"><strong>Main responsibilities:</strong> </br>
+                1. Analysis of the company's financial performance </br>
+                2. Сreating Power BI reports and insights for management </br>
+                3. Introducing a culture of working with data and reports in the company </br>
+                4. Team management in the creation of a new database </br>
+              </p>
+              <p class="card-text"><strong>Accomplishments:</strong> </br>
+                Creating a culture of data analytics in a company from the ground up.
+              </p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Vodafone Ukraine</h5>
+              <p class="card-text">11.2018 - 03.2021</p>
+               <p class="card-text"><strong>Main responsibilities:</strong> </br>
+                1. Analysis of purchases, sales, product balances by product categories </br>
+                2. Setting goals for purchases, sales by product categories </br>
+                3. Market research </br>
+                4. Participation in the creation of marketing campaigns </br>
+              </p>
+              <p class="card-text"><strong>Accomplishments:</strong> </br>
+                Creating a new reporting system for sales and marketing departments.
+              </p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Nestlé-Ukraine Ltd.</h5>
+              <p class="card-text">10.2004 - 05.2011</p>
+              <p class="card-text"><strong>Main responsibilities:</strong> </br>
+                1. Analysis of purchases, sales, product balances on distributors </br>
+                2. Setting goals for purchases, sales for regions (Distributors and National Key Clients) </br>
+                3. Coordinate work and support end users of the SAP system </br>
+                4. Preparation of data and coordination of the formation of a monthly report on the results of sales for management </br>
+                5. Updating Nielsen data </br>
+              </p>
+              <p class="card-text"><strong>Accomplishments:</strong> </br>
+                Creation of a new reporting system for distributors.
+              </p>
+            </div>
+          </div>
+      </div>
+    </div>
+   </div>
+  </body>
+</html>
