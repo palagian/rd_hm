@@ -1,0 +1,41 @@
+body {
+    padding: 20px;
+    background-color: #f5f7fd;
+}
+
+.profile-img {
+    width: 200px;
+    height: 200px;
+    margin-top: 50px;
+    border: 5px solid white;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+}
+
+.col-md-4 {
+    background-image: url("background_img.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.col-md-8 {
+    padding: 20px;
+}
+
+span {
+    font-size: 25px;
+}
+
+.btn {
+    width: 40%;
+    font-size: 0.8rem;
+    display: block;
+    margin: 8px;
+    background-color: #8796e3;
+    border: none;
+    align-items: center;
+}
