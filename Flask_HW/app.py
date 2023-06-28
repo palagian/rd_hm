@@ -24,16 +24,19 @@ app = Flask(__name__)
 
 @app.route('/hello')
 def hello_world():
+    app.logger.info('hello_world is called')
     return 'Hello, world!'
 
 # 3. Додати ще два ендпоінта: один щоб повертав html, інший - json
 
 @app.route('/html')
 def products():
+    app.logger.info('products is called')
     return 'milk, coffee, bread, butter'
 #
 @app.route('/json')
 def users():
+    app.logger.info('users is called')
     return [
         {
             'name': 'Anastasiia',
