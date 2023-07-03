@@ -75,7 +75,7 @@ def get_random_books():
     count = request.args.get('count')
     if count is None:
         count = random.randint(1, len(books))
-    elif int(count) > len(names):       # if requested number is higher than lenght of the list
+    elif int(count) > len(books):       # if requested number is higher than lenght of the list
         abort(400, 'We do not have so many books.')
     else:
         count = min(int(count), len(books))
