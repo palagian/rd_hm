@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Book
+{% endblock %}
+
+{% block body %}
+    {% if username%}
+        <div id="user-block">
+            Hello, {{ username }}!
+        </div>
+    {% else %}
+        <a href="{{ url_for('login_get') }}">login</a>
+    {% endif %}
+    {% if book %}
+        <h1>Book Details:</h1>
+        <p>Book id: {{ book.id }}</p>
+        <p>Book title: {{ book.title }}</p>
+    {% else %}
+        <h1>Book not found</h1>
+    {% endif %}
+{% endblock %}
