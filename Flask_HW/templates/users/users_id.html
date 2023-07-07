@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    User
+{% endblock %}
+
+{% block body %}
+    {% if username%}
+        <div id="user-block">
+            Hello, {{ username }}!
+        </div>
+    {% else %}
+        <a href="{{ url_for('login_get') }}">login</a>
+    {% endif %}
+    {% if user %}
+        <h1>User Details:</h1>
+        <p>User id: {{ user.id }}</p>
+        <p>User name: {{ user.name }}</p>
+    {% else %}
+        <h1>User not found</h1>
+    {% endif %}
+{% endblock %}

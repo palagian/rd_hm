@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Random Users
+{% endblock %}
+
+{% block body %}
+    {% if username%}
+        <div id="user-block">
+            Hello, {{ username }}!
+        </div>
+    {% else %}
+        <a href="{{ url_for('login_get') }}">login</a>
+    {% endif %}
+    <h1>Random Users:</h1>
+    <ul>
+        {% for name in names %}
+        <li>User id: {{ name.id }}, Name: {{ name.name }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

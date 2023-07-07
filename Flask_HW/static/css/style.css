@@ -1,0 +1,46 @@
+/* 5. (необов'язкове виконання) Додати стилі до HTML коду, що міститься в темплейтах, розмістивши css файли як статичні
+файли в окремій директорії.*/
+
+body {
+    background-image: linear-gradient(to right, #c6cee8, #6a759a);;
+    font-family: Calibri;
+    margin: 50px;
+}
+
+form {
+    padding-bottom: 25px;
+}
+
+li {
+    padding-bottom: 15px;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+    letter-spacing: 1px;
+}
+
+h1 {
+    text-shadow:  2px 2px 4px gray;
+}
+
+#user-block {
+    color: darkblue;
+    font-weight: bold;
+}
+
+#button {
+    background-image: linear-gradient(to right, #c6cee8, #6a759a);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 25px;
+    padding-right: 25px;
+    font-weight: bold;
+    border-radius: 12px;
+    border:  0.5px solid darkblue;
+}
+
+#button:hover {
+    background-image: linear-gradient(to right, #dedbca, #c9b951);
+}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}
+    Params
+{% endblock %}
+
+{% block body %}
+    {% if username%}
+        <div id="user-block">
+            Hello, {{ username }}!
+        </div>
+    {% else %}
+        <a href="{{ url_for('login_get') }}">login</a>
+    {% endif %}
+    <h1>Query Parameters:</h1>
+    <table>
+        <tr>
+            <th>Parameter</th>
+            <th>Value</th>
+        </tr>
+        {% for key, value in parameters.items() %}
+        <tr>
+            <td>{{ key }}</td>
+            <td>{{ value }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{%  endblock %}

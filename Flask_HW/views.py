@@ -1,4 +1,4 @@
-from flask import abort, redirect, request
+from flask import abort, redirect, request, render_template, session, url_for
 from app import app
 import random
 import re
@@ -31,7 +31,7 @@ books = [
     {'id': 1,
      'title': 'Kobzar'},
     {'id': 2,
-     'titlee': 'Eneida'},
+     'title': 'Eneida'},
     {'id': 3,
      'title': '1984'},
     {'id': 4,
@@ -50,16 +50,24 @@ books = [
      'title': 'Kaidasheva simya'},
 ]
 
-# 1. Створити функції для обробки таких запитів:
-# - GET /users – має повертати рандомний список імен (будь-яку кількість)
-# - GET /books – має повертати рандомний список книжок (будь-яку кількість) у вигляді html списку
+# 1. Створити html темплейти для кожного із ендпоінтів, що були створені під час виконання минулого ДЗ. Мають відображатися ті самі дані, але інтегровані
+# в темплейти за допомогою контексту.
+# - /users
+# - /users/{id}
+# - /books
+# - /books/{id}
+# - /params
+# - /login
+# - /
 
-# 7. (необов'язкове виконання) Модифікувати функції обробники /users та /books із першого завдання таким чином, щоб вони повертали точну
-# кількість значень на основі query param count: /users?count=20 має повернути 20 значень. Якщо параметр не передано — кількість має бути рандомною.
+# 3. На всі сторінки додати перевірку на те, чи містить сесія імʼя користувача:
+# - Якщо містить – відображати на самому початку сторінки текст "Hello, username", де username – імʼя користувача із сесії.
+# - Якщо не містить – перенаправляти користувача на сторінку /login
 
 @app.get ('/users')
 def get_random_users():
     app.logger.info('get_random_users is called')
+    username = session.get('username')
     count = request.args.get('count')
     if count is None:
         count = random.randint(1, len(names))
@@ -68,11 +76,12 @@ def get_random_users():
     else:
         count = min(int(count), len(names))
     random_names = random.sample(names, k=count)
-    return random_names
+    return render_template('users/users.html', names=random_names, username=username)
 
 @app.get ('/books')
 def get_random_books():
     app.logger.info('get_random_books is called')
+    username = session.get('username')
     count = request.args.get('count')
     if count is None:
         count = random.randint(1, len(books))
@@ -81,79 +90,45 @@ def get_random_books():
     else:
         count = min(int(count), len(books))
     random_books = random.sample(books, k=count)
+    return render_template('books/books.html', books=random_books, username=username)
 
-    response = "<h1>Books list:</h1>\n<ul>\n"
-
-    for book in random_books:
-        response += f"<li>{book['title']}</li>\n"
-    response += "</ul>"
-
-    return response
-
-# 2. Створити функції-обробники запитів на GET  /users та GET /books, що мають приймати url-параметри (/users/1, /books/kobzar):
-# - Для /users – id, що може бути тільки числовим значенням. Якщо значення id ділиться на 2 - повертати текст із цим значенням.
-# Якщо не ділиться – повертати статус 404 Not Found
-# - Для /books – title, текстове значення. Трансформувати першу літеру title у велику, а всі інші у маленькі (за допомогою одного
-# із методів str), повернути трансформоване значення у якості відповіді
 
 @app.get ('/users/<int:user_id>')
 def get_user(user_id):
     app.logger.info(f'get_user is called with user_id: {user_id}')
+    username = session.get('username')
     # я додала додаткову умову до завдання: щоб шукав парні id саме в списку names. Тобто 404 помилка вийде для непарних id в names та для всіх id поза списком names.
     user = next((item for item in names if item['id'] == user_id and item['id'] % 2 == 0), None)
     if user:
-        return f"User id: {user_id}, Name: {user['name']}"
+        return render_template('users/users_id.html', user=user, username=username)
     else:
         abort(404, 'User not found')
 
 @app.get ('/books/<string:title>')
 def get_book(title):
     app.logger.info(f'get_book is called with title: {title}')
+    username = session.get('username')
     transformed_title = title.capitalize()
-    return transformed_title
+    book = next((b for b in books if b['title'] == transformed_title), None)
+    return render_template('books/books_id.html', title=transformed_title, book=book, username=username)
 
-# 3. Створити функцію для обробки запитів GET /params – має повертати HTML таблицю, в якій будуть міститися ключі та значення query parameters.
-# Наприклад, при запиті GET /params?name=Test&age=1, на сторінці має відобразитися:
-# parameter | value
-# name      | Test
-# age       | 1
 
 @app.get('/params')
 def get_params():
     app.logger.info('get_params is called')
+    username = session.get('username')
     parameters = request.args
-    response = "<h1>Query Parameters:</h1>\n<table>\n<tr><th>Parameter</th><th>Value</th></tr>\n"
+    return render_template('params/params.html', parameters=parameters, username=username)
 
-    for key, value in parameters.items():
-        response += f"<tr><td>{key}</td><td>{value}</td></tr>\n"
-
-    response += "</table>"
-    return response
-
-# 4. Створити функцію для обробки запитів GET, POST /login – при запиті GET має повертати HTML форму (method=POST, action=/login),
-# що має містити поля username, password та кнопку submit.
-# При запиті POST має перевіряти чи містяться в даних запиту username та password:
-# - Якщо запит містить ці дані, потрібно перенаправити користувача на сторінку /users.
-# - Якщо ні – потрібно повернути помилку 400 із інформацією про відсутні дані.
-
-# 8. (необов'язкове виконання) До функції обробника POST /login додати валідацію username та password:
-# - Username не менше 5 символів
-# - Password має містити мінімум 1 цифру і 1 велику літеру, має бути не менше ніж 8 символів
 
 @app.get ('/login')
 def login_get():
     app.logger.info('login_get is called')
-    return """
-            <h1>Login Form</h1>
-                <form method="POST" action="/login">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username"><br><br>
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password"><br><br>
-                    <input type="submit" value="Submit">
-                </form>
-            """
+    return render_template('login/login.html')
 
+# 2. В ендпоінт /login, при заповненні форми, додати функціонал запису імені користувача в сесію.
+
+app.secret_key = 'secret_key'
 @app.post ('/login')
 def login_post():
     app.logger.info('login_post is called')
@@ -165,13 +140,12 @@ def login_post():
         password_pattern = r'^(?=.*\d)(?=.*[A-Z]).{8,}$'
 
         if re.match(username_pattern, username) and re.match(password_pattern, password):
-            return redirect('/users')
+            session['username'] = username
+            return redirect(url_for('home', username=username))
         else:
             abort(400, 'Invalid username or password')
     else:
         abort(400, 'Missing username or password')
-
-# 5. (необов'язкове виконання) Створити кастомні обробники помилок 404 та 500, що мають повертати кастомних html код для відображення.
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -181,17 +155,18 @@ def page_not_found(error):
 def internal_server_error(error):
     return 'Oops, internal server error', 500
 
-# 6. (необов'язкове виконання) Створити обробник запиту GET /, що має повертати html код із посиланнями на сторінки /login, /users, /books, /params
 
 @app.get('/')
 def home():
     app.logger.error('home is called')
-    return '''
-        <h1>Welcome to the Homepage!</h1>
-        <ul>
-            <li><a href="/login">Login</a></li>
-            <li><a href="/users">Users</a></li>
-            <li><a href="/books">Books</a></li>
-            <li><a href="/params">Params</a></li>
-        </ul>
-    '''
+    username = session.get('username')
+    return render_template('home/home.html', username=username)
+
+# 4. (необов'язкове виконання) На кожну сторінку додати кнопку logout, при натисканні якої користувач має видалятися із сесії і
+# перенаправлятися на сторінку /login. Для цього потрібно реалізувати також окремий ендпоінт /logout.
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    app.logger.info('logout is called')
+    session.pop('username', None)
+    return redirect(url_for('login_get'))
