@@ -1,116 +1,78 @@
-from flask import abort, redirect, request, render_template, session, url_for
-from app import app
-import random
+from flask import abort, redirect, request, render_template, session, url_for, jsonify
 import re
+from app import db, app
+from models import User, Book, Purchase
 
+# 5. Модифікувати існуючі, або додати нові енпоінти. Дані відображати у форматі JSON або використовуючи HTML template:
+# - GET /users — відобразити список всіх обʼєктів User (всі записи відповідної таблиці)
+# - GET /users/<int:user_id> —- відобразити інформацію про User із відповідним id, або ж 404
+# - GET /books —- відобразити список всіх обʼєктів Book (всі записи відповідної таблиці)
+# - GET /books/<int:book_id> —- відобразити інформацію про Book із відповідним id, або ж 404
+# - GET /purchases —- відобразити список всіх обʼєктів Purchase (всі записи відповідної таблиці)
+# - GET /purchases/<int:purchase_id> —- відобразити інформацію про Purchase із відповідним id, або ж 404
 
-names = [
-    {'id': 1,
-     'name': 'Alice'},
-    {'id': 2,
-     'name': 'Andrew'},
-    {'id': 3,
-     'name': 'Christina'},
-    {'id': 4,
-     'name': 'Danylo'},
-    {'id': 5,
-     'name': 'Taras'},
-    {'id': 6,
-     'name': 'Anhelina'},
-    {'id': 7,
-     'name': 'Julia'},
-    {'id': 8,
-     'name': 'Serhii'},
-    {'id': 9,
-     'name': 'Oleksandr'},
-    {'id': 10,
-     'name': 'Olha'},
-]
-
-books = [
-    {'id': 1,
-     'title': 'Kobzar'},
-    {'id': 2,
-     'title': 'Eneida'},
-    {'id': 3,
-     'title': '1984'},
-    {'id': 4,
-     'title': 'Lisova pisnia'},
-    {'id': 5,
-     'title': 'Harry Potter'},
-    {'id': 6,
-     'title': 'Romeo and Juliet'},
-    {'id': 7,
-     'title': 'Alchemist'},
-    {'id': 8,
-     'title': 'Instytutka'},
-    {'id': 9,
-     'title': 'Tini zabutykh predkiv'},
-    {'id': 10,
-     'title': 'Kaidasheva simya'},
-]
-
-# 1. Створити html темплейти для кожного із ендпоінтів, що були створені під час виконання минулого ДЗ. Мають відображатися ті самі дані, але інтегровані
-# в темплейти за допомогою контексту.
-# - /users
-# - /users/{id}
-# - /books
-# - /books/{id}
-# - /params
-# - /login
-# - /
-
-# 3. На всі сторінки додати перевірку на те, чи містить сесія імʼя користувача:
-# - Якщо містить – відображати на самому початку сторінки текст "Hello, username", де username – імʼя користувача із сесії.
-# - Якщо не містить – перенаправляти користувача на сторінку /login
+# 6. (необов'язкове виконання) При передачі із запитом query param size=n для ендпоінтів зі списком обʼєктів, показувати
+# відповідну кількість обʼєктів
 
 @app.get ('/users')
-def get_random_users():
-    app.logger.info('get_random_users is called')
+def get_users():
     username = session.get('username')
-    count = request.args.get('count')
-    if count is None:
-        count = random.randint(1, len(names))
-    elif int(count) > len(names):       # if requested number is higher than lenght of the list
-        abort(400, 'We do not have so many users.')
-    else:
-        count = min(int(count), len(names))
-    random_names = random.sample(names, k=count)
-    return render_template('users/users.html', names=random_names, username=username)
+    size = request.args.get('size')
+    query = db.select(User)
+    if size is not None:
+        query = query.limit(size)
+    users = db.session.execute(query).scalars()
+    return render_template('users/users.html', users=users, username=username)
 
 @app.get ('/books')
 def get_random_books():
-    app.logger.info('get_random_books is called')
     username = session.get('username')
-    count = request.args.get('count')
-    if count is None:
-        count = random.randint(1, len(books))
-    elif int(count) > len(books):       # if requested number is higher than lenght of the list
-        abort(400, 'We do not have so many books.')
-    else:
-        count = min(int(count), len(books))
-    random_books = random.sample(books, k=count)
-    return render_template('books/books.html', books=random_books, username=username)
+    size = request.args.get('size')
+    query = db.select(Book)
+    if size is not None:
+        query = query.limit(size)
+    books = db.session.execute(query).scalars()
+    return render_template('books/books.html', books=books, username=username)
 
 
 @app.get ('/users/<int:user_id>')
 def get_user(user_id):
-    app.logger.info(f'get_user is called with user_id: {user_id}')
     username = session.get('username')
-    # я додала додаткову умову до завдання: щоб шукав парні id саме в списку names. Тобто 404 помилка вийде для непарних id в names та для всіх id поза списком names.
-    user = next((item for item in names if item['id'] == user_id and item['id'] % 2 == 0), None)
+    user = User.query.get(user_id)
     if user:
         return render_template('users/users_id.html', user=user, username=username)
     else:
         abort(404, 'User not found')
 
-@app.get ('/books/<string:title>')
-def get_book(title):
-    app.logger.info(f'get_book is called with title: {title}')
+@app.get ('/books/<int:book_id>')
+def get_book(book_id):
     username = session.get('username')
-    transformed_title = title.capitalize()
-    book = next((b for b in books if b['title'] == transformed_title), None)
-    return render_template('books/books_id.html', title=transformed_title, book=book, username=username)
+    book = Book.query.get(book_id)
+    if book:
+        return render_template('books/books_id.html', book=book, username=username)
+    else:
+        abort(404, 'Book not found')
+
+# 7. (необов'язкове виконання) При запиті на endpoint /purchases та /purchases/<int:purchase_id> виводити не лише інформацію
+# про покупки, але і назву книжки та імʼя користувача, що її купив
+@app.get('/purchases')
+def get_purchases():
+    username = session.get('username')
+    size = request.args.get('size')
+    query = db.select(Purchase)
+    if size is not None:
+        query = query.limit(size)
+    purchases = db.session.execute(query).scalars()
+    return render_template('purchases/purchases.html', purchases=purchases, username=username)
+
+@app.get('/purchases/<int:purchase_id>')
+def get_purchase(purchase_id):
+    username = session.get('username')
+    purchase = Purchase.query.get(purchase_id)
+    if purchase:
+        return render_template('purchases/purchases_id.html', purchase=purchase, username=username)
+    else:
+        abort(404, 'Purchase not found')
 
 
 @app.get('/params')
@@ -126,9 +88,6 @@ def login_get():
     app.logger.info('login_get is called')
     return render_template('login/login.html')
 
-# 2. В ендпоінт /login, при заповненні форми, додати функціонал запису імені користувача в сесію.
-
-app.secret_key = 'secret_key'
 @app.post ('/login')
 def login_post():
     app.logger.info('login_post is called')
@@ -162,11 +121,71 @@ def home():
     username = session.get('username')
     return render_template('home/home.html', username=username)
 
-# 4. (необов'язкове виконання) На кожну сторінку додати кнопку logout, при натисканні якої користувач має видалятися із сесії і
-# перенаправлятися на сторінку /login. Для цього потрібно реалізувати також окремий ендпоінт /logout.
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     app.logger.info('logout is called')
     session.pop('username', None)
     return redirect(url_for('login_get'))
+
+# 8. (необов'язкове виконання) Реалізувати можливість створення нових обʼєктів в базі даних. Ендпоінти можуть приймати
+# "application/json" або "application/x-www-form-urlencoded":
+# - POST /users
+# - POST /books
+# - POST /purchases (перевірити чи існують відповідні User та Book)
+
+def validate_content_type():
+    if request.content_type not in ['application/json', 'application/x-www-form-urlencoded']:
+        return jsonify(message='Invalid content type'), 415
+@app.post('/users')
+def create_user():
+    validate_content_type()
+
+    name = request.form.get('name') or request.json.get('name')
+    if name:
+        user = User(name=name)
+        db.session.add(user)
+        db.session.commit()
+        return jsonify(message='User created successfully'), 201
+    else:
+        return jsonify(message='Missing name parameter'), 400
+
+
+@app.post('/books')
+def create_book():
+    validate_content_type()
+
+    title = request.form.get('title') or request.json.get('title')
+    if title:
+        book = Book(title=title)
+        db.session.add(book)
+        db.session.commit()
+        return jsonify(message='Book created successfully'), 201
+    else:
+        return jsonify(message='Missing title parameter'), 400
+
+
+@app.post('/purchases')
+def create_purchase():
+    validate_content_type()
+
+    user_id = request.form.get('user_id') or request.json.get('user_id')
+    book_id = request.form.get('book_id') or request.json.get('book_id')
+
+    if user_id and book_id:
+        user = User.query.get(user_id)
+        book = Book.query.get(book_id)
+
+        if user and book:
+            quantity = request.form.get('quantity') or request.json.get('quantity')
+            if not quantity:
+                quantity = 1
+
+            purchase = Purchase(user=user, book=book, quantity=quantity)
+            db.session.add(purchase)
+            db.session.commit()
+            return jsonify(message='Purchase created successfully'), 201
+        else:
+            return jsonify(message='User or book not found'), 404
+    else:
+        return jsonify(message='Missing user_id or book_id parameter'), 400
