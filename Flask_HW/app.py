@@ -1,57 +1,26 @@
+import logging
 from flask import Flask
-from logging.config import dictConfig
+from dotenv import load_dotenv
+from config import AppConfig
+from flask_sqlalchemy import SQLAlchemy
 
-#4. Налаштувати логування у будь-якому форматі. Додати INFO логи у всі три функції.
-dictConfig({
-    'version': 1,
-    'formatters': {'default': {
-        'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
-    }},
-    'handlers': {'wsgi': {
-        'class': 'logging.StreamHandler',
-        'stream': 'ext://flask.logging.wsgi_errors_stream',
-        'formatter': 'default'
-    }},
-    'root': {
-        'level': 'INFO',
-        'handlers': ['wsgi']
-    }
-})
+load_dotenv()
 
+db = SQLAlchemy()
 app = Flask(__name__)
-
-# 2. Встановити Flask та створити flask application із ендпоінтом hello (GET). Ендпоінт має повертати текст "Hello, world!". (http://localhost:5000/hello)
-
-@app.route('/hello')
-def hello_world():
-    app.logger.info('hello_world is called')
-    return 'Hello, world!'
-
-# 3. Додати ще два ендпоінта: один щоб повертав html, інший - json
-
-@app.route('/html')
-def products():
-    app.logger.info('products is called')
-    return 'milk, coffee, bread, butter'
-#
-@app.route('/json')
-def users():
-    app.logger.info('users is called')
-    return [
-        {
-            'name': 'Anastasiia',
-            'surname': 'Palahina',
-            'age': 36
-        },
-        {
-            'name': 'Oleksii',
-            'surname': 'Kovalenko',
-            'age': 37
-        }
-    ]
-
+app.logger.setLevel(logging.INFO)
+app.config.from_object(AppConfig)
+db.init_app(app)
 
 from views import *
+from models import *
+
+with app.app_context():
+    db.create_all()
+
+# 3. Замінити в коді всі секретні значення на значення із environment
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host=AppConfig.HOST,
+            port=AppConfig.PORT,
+            debug=AppConfig.DEBUG)

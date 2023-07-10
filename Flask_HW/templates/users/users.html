@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    Random Users
+    Users
 {% endblock %}
 
 {% block body %}
@@ -12,10 +12,10 @@
     {% else %}
         <a href="{{ url_for('login_get') }}">login</a>
     {% endif %}
-    <h1>Random Users:</h1>
+    <h1>Users:</h1>
     <ul>
-        {% for name in names %}
-        <li>User id: {{ name.id }}, Name: {{ name.name }}</li>
+        {% for user in users %}
+        <li><a href="{{ url_for('get_users', user_id=user.id) }}">{{ user.name }}</a></li>
         {% endfor %}
     </ul>
 {% endblock %}

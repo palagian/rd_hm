@@ -12,10 +12,10 @@
     {% else %}
         <a href="{{ url_for('login_get') }}">login</a>
     {% endif %}
-    <h1>Random Books:</h1>
+    <h1>Books:</h1>
     <ul>
         {% for book in books %}
-        <li>Book id: {{ book.id }}, Title: {{ book.title }}</li>
+        <li>{{ book.title }}</li>
         {% endfor %}
     </ul>
 {% endblock %}
