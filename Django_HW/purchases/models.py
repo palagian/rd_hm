@@ -12,3 +12,6 @@ class Purchase(models.Model):
         db_table = 'purchase'
         ordering = ['-purchase_date']
 
+    def __str__(self):
+        return f"{self.id}: {self.user.username} bought {self.book.title} on {self.purchase_date}"
+
