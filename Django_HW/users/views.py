@@ -1,7 +1,13 @@
-from django.http import JsonResponse
+from django.views.generic import ListView, DetailView
 from .models import User
 
 
-def get_users(request):
-    users = User.objects.all().values()
-    return JsonResponse(list(users), safe=False)
+class UserListView(ListView):
+    model = User
+    template_name = 'user_list.html'
+    context_object_name = 'users'
+
+class UserDetailView(DetailView):
+    model = User
+    template_name = 'user_detail.html'
+    context_object_name = 'user'

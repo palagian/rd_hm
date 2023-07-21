@@ -1,7 +1,10 @@
 from django.urls import path
-from purchases import views
+from .views import PurchaseListView, PurchaseDetailView
 
+
+app_name = 'purchases'
 
 urlpatterns = [
-    path('', views.get_purchases, name='get_purchases')
+    path('', PurchaseListView.as_view(), name='purchase_list'),
+    path('<int:pk>/', PurchaseDetailView.as_view(), name='purchase_detail'),
 ]
