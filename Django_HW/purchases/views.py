@@ -1,7 +1,14 @@
-from django.http import JsonResponse
+from django.views.generic import ListView, DetailView
 from .models import Purchase
 
 
-def get_purchases(request):
-    purchases = Purchase.objects.all().values()
-    return JsonResponse(list(purchases), safe=False)
+class PurchaseListView(ListView):
+    model = Purchase
+    template_name = 'purchase_list.html'
+    context_object_name = 'purchases'
+
+
+class PurchaseDetailView(DetailView):
+    model = Purchase
+    template_name = 'purchase_detail.html'
+    context_object_name = 'purchase'

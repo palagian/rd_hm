@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Purchases List</title>
+</head>
+<body>
+    <h1>Purchases List</h1>
+    <ul>
+        {% for purchase in purchases %}
+        <li><a href="{% url 'purchases:purchase_detail' purchase.pk %}">Id: {{ purchase.id }}, Purchase Date: {{ purchase.purchase_date }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
