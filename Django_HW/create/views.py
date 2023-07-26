@@ -2,7 +2,7 @@ from django.views.generic import ListView, CreateView
 from users.models import User
 from books.models import Book
 from purchases.models import Purchase
-from .forms import UserForm, BookForm, PurchaseForm
+from .forms import CustomUserCreationForm, BookForm, PurchaseForm
 
 
 class CreateListView(ListView):
@@ -15,7 +15,7 @@ class CreateListView(ListView):
 
 class CreateUserView(CreateView):
     model = User
-    form_class = UserForm
+    form_class = CustomUserCreationForm
     template_name = 'create_user.html'
     success_url = '/users/'
 
