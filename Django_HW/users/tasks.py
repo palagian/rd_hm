@@ -1,8 +1,5 @@
 from celery import shared_task
-from celery.schedules import crontab
-from datetime import timedelta
 
-from Django_HW.celery import app
 from .models import User
 from purchases.models import Purchase
 
